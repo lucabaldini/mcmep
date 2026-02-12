@@ -3,7 +3,7 @@ project:
 
 book:
   title: "Monte Carlo Methods for Experimental Physics"
-  author: "E.~Graverini and L.~Baldini"
+  author: "E. Graverini and L. Baldini"
   date: "2/12/2026"
   chapters:
     - index.qmd
