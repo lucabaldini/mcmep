@@ -1,0 +1,25 @@
+# Generating random numbers
+
+
+*"Anyone who considers arithmetical methods of producing random digits is, of course,
+in a state of sin."* (John von Neumann, 1949)
+
+
+## True vs. pseudo-random sequences
+
+
+## Pseudo-random numbers via recurrence
+
+$$
+X_{n+1} = f(X_n)
+$$
+
+## Modular arithmetic
+
+
+## Linear congruential methods
+
+
+[paper](https://archive.org/details/proceedings_of_a_second_symposium_on_large-scale_/page/140/mode/2up)
+
+## Tests for randomness
