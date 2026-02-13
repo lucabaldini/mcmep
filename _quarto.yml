@@ -1,0 +1,27 @@
+project:
+  type: book
+
+book:
+  title: "Monte Carlo Methods for Experimental Physics"
+  author: "E. Graverini and L. Baldini"
+  date: "2/12/2026"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - prob.qmd
+    - rangen.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+  pdf:
+    documentclass: scrreprt
+
+
+

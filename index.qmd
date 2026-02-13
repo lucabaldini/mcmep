@@ -1,0 +1,4 @@
+# Preface {.unnumbered}
+
+This is a first attempt at using Quarto books <https://quarto.org/docs/books>
+for lecture notes.
