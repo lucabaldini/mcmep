@@ -1,20 +1,147 @@
 # Generating random numbers
 
-
 *"Anyone who considers arithmetical methods of producing random digits is, of course,
 in a state of sin."* (John von Neumann, 1949)
 
+I know, this is abused---you will find this very sentence quoted in any sensible
+resource about random numbers you might come across. But, on a second thought,
+it *really* encapsulates well the subject we are covering in this section:
+generating random sequences by means of arithmetical methods. Quite an oxymoron, eh?
 
-## True vs. pseudo-random sequences
+
+## Prelude: the wheel of fortune
+
+If you were to ask an ordinary person on the street how they would go about drawing
+a random sequence, chances are that some sort of variant of the wheel of fortune
+would come up pretty high in the list of the most popular answers---provided that
+the person would care answering, of course. (I am sure you are familiar with at
+least one of the many popular TV shows that are based on the very concept of a
+wheel of fortune, but the
+[Wikipedia entry](https://en.wikipedia.org/wiki/Wheel_of_Fortune_(medieval))
+on the subject is worth at least a quick read, because the idea seems very
+deeply rooted, and amusingly so, in western philosophy.)
+
+Now, let us stop for a second and ask ourselves a very fundamental question:
+what is the magic in the wheel of fortune that makes its output so unpredictable?
+And I am going to stop for a second and let you think about it.
+
+You got it! It is the fact that *the wheel wraps around at every turn*. Let's try
+and make this more quantitative with a toy model. For one thing we shall assume
+that the wheel has 10 segments, labeled with the integers from 0 to 9, that is,
+we are generating one decimal digit. If we say that $\omega_0$ is the initial
+angular velocity that we spin the thing with, and $\alpha$ the (modulo of) the
+angular deceleration, which for simplicity we shall assume constant in time,
+it is easy to show that the wheel stops when the angle $\theta$ has changed by
+$$
+\theta_0 = \frac{\omega_0^2}{2\alpha}.
+$$
+If you have an uncertainty $\sigma_\omega$ on $\omega_0$ (which you always do),
+you will have an uncertainty of the final angular coordinate of
+$$
+\frac{\sigma_\theta}{\theta_0} = 2 \frac{\sigma_\omega}{\omega_0}
+\quad\text{or}\quad
+\sigma_\theta = \frac{2\theta_0}{\omega_0} \sigma_\omega =
+\frac{\omega_0}{\alpha} \sigma_\omega
+$$
+That is: if you have a 1% uncertainty on $\omega_0$, you end up with a 2% uncertainty
+on the final value of $\theta$. And this is where things get interesting. If $\theta$
+was measuring a distance in a given direction and we were talking about a
+bocce-ball court (or a curling court, for what it's worth) our model would describe
+a very poor device for generating random sequences: a good player can train to throw
+a ball (or a rock) very consistently (i.e., with a small error on the initial
+velocity) which means we can reliably predict where the ball itself will end up.
+Isn't that the whole point of bocce, by the way?
+
+But if we now go back to our wheel, where $\theta$ wraps up at each turn, *and we
+assume that $\omega_0$ is large enough that the things does many turns*, the
+situation is completely different. You might have noticed that the absolute error
+on $\theta_0$ is proportional to $\omega_0$ and, for any value of $\alpha$ and
+$\sigma_\omega$ there will be a value of $\omega_0$ that is large enough for the
+error on $\theta$ to be
+$$
+\sigma_\theta \geq 2\pi.
+$$
+When that happens, we have lost any capability to predict where the wheel will
+land. We might be able to predict roughly *how many turns* the wheel will do, but
+not the actual outcome. (In practice, for this to work, you might have to fine-tune
+$\alpha$ based on some reasonable assumptions for $\omega_0$ and $\sigma_\omega$,
+but this is a technical detail.)
+
+If you got this far, you might be wondering: yeah, this is fun, but how about all
+this hype on the wheel of fortune? Weren't we supposed to talk about random numbers?
+Well, as it turns out the fortune wheel is a surprisingly good mechanical analogy
+to how a typical pseudo-random number generator works. The mathematical equivalent
+of the concept of "wrapping around at every turn" is the *modulo* operation in
+ordinary integer arithmetic and it is interesting to note that, as we shall see
+in a moment, the modulo is a fundamental ingredient in all the generators that are
+relevant for everyday use.
+We shall briefly come back to modular arithmetic in section @sec-modular-arithmetic
+but, before we do that, there's a few thing we should sort out.
 
 
-## Pseudo-random numbers via recurrence
+## Random (and pseudo-random) sequences
+
+While *random numbers* is an expression that you often find in the literature,
+you might have noticed that we prefer using *random sequence*. The reason is quite
+simple: there is no such a thing as a random number. "Here is a 5---is that random?"
+Clearly such a question makes little or no sense. What makes sense, instead,
+is the concept of a random sequence. That one we like.
+
+So let's say we have a sequence $X_n$ of integers with $0 \leq X_n < m$. (In our
+toy wheel-of-fortune setup, e.g., we had $m = 10$, but we anticipate that, for all
+practical purposes, we shall be interested in much larger values for $m$.)
+To be concrete, let's say that we spin our wheel of fortune and get
+$$
+X_n = 2, 5, 1, 3, 9, \ldots
+$$
+Can we confidently say that this is a random sequence? As it turns out, this is
+a *very* hard question that has no good answer. We shall briefly come back to the
+issue in @sec-randomness-tests, but we anticipate that, while there are obvious
+properties that we would like from a truly random sequence (such as the fact that
+all the possible elements appear with the same frequency, within the expected statistical
+fluctuations), there is no easy direct *proof* that a given sequence is random.
+Usually people apply an entire battery of standard tests and declare that a given
+generator is random if the sequences it produces pass all the tests.
+
+It is also worth mentioning that, while the sequence
+$$
+X_n = 0, 1, 2, 3, 4, 5, \ldots
+$$
+definitely does not appear to be random (although all the digits are equi-distributed)
+in a truly random setting it is just as likely to appear as any other---including
+the first one we have shown. You get it: assessing randomness is difficult.
+
+Let us turn for a second to a slightly different question: how could I conceivably
+generate a random sequence? Well, arguably I could use a truly random natural
+process. Although, when you think really hard about this, it is far from trivial
+to devise a truly random process, True Random Number Generators (TRNGs) do exist,
+and serve very precise purposes. Have a look at [www.random.org](https://www.random.org)
+for a good example, and a good source of information on the topic. What we are
+mainly concerned here, though, is how to programmatically generate deterministic
+sequences by means of arithmetical methods that behave *as if they were random*.
+Such generators are called Pseudo-Random Number Generators (PRNGs) and are the
+main topic of this chapter.
+
+The distinction between TRNG and PRNG is a fundamental one, and its importance
+can hardly be overstated. The former are by definition aperiodic and non deterministic
+(i.e., you cannot repeat the same sequence twice) and tend not to be very efficient.
+Yet, if you want to run a lottery, you should probably have a look at this article
+about the
+[the Michael Larsen incident](https://web.archive.org/web/20170712041017/http://www.rotten.com/library/conspiracy/press-your-luck/)
+(amusing, I promise) before you consider opting away from a TRNG.
+
+PRNGs, on the other hand, are typically *very* efficient and have the advantage
+that you can regenerate a given sequence as many times as you want. This is
+definitely your first choice for a Physics simulation---really, it is a no-brainer.
+
+
+## Pseudo-random sequences via recurrence
 
 $$
 X_{n+1} = f(X_n)
 $$
 
-## Modular arithmetic
+## Modular arithmetic {#sec-modular-arithmetic}
 
 
 ## Linear congruential methods
@@ -22,4 +149,4 @@ $$
 
 [paper](https://archive.org/details/proceedings_of_a_second_symposium_on_large-scale_/page/140/mode/2up)
 
-## Tests for randomness
+## Tests for randomness {#sec-randomness-tests}
