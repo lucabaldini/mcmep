@@ -25,6 +25,12 @@ Now, let us stop for a second and ask ourselves a very fundamental question:
 what is the magic in the wheel of fortune that makes its output so unpredictable?
 And I am going to stop for a second and let you think about it.
 
+::: {#fig-wheel}
+![](figures/wheel.png){width=60%}
+
+A wheel with 10 sectors.
+:::
+
 You got it! It is the fact that *the wheel wraps around at every turn*. Let's try
 and make this more quantitative with a toy model. For one thing we shall assume
 that the wheel has 10 segments, labeled with the integers from 0 to 9, that is,
@@ -164,6 +170,11 @@ X_{n+1} = f(X_n)
 $$
 
 ## Modular arithmetic {#sec-modular-arithmetic}
+
+
+## Middle square
+
+Look at this [blog post](http://bit-player.org/2022/the-middle-of-the-square/).
 
 
 ## Linear congruential methods
