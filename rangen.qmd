@@ -94,15 +94,14 @@ print(spin_wheel(10.2))
 print(spin_wheel(10.3))
 ```
 
-
 If you got this far, you might be wondering: yeah, this is fun, but how about all
 this hype on the wheel of fortune? Weren't we supposed to talk about random numbers?
 Well, as it turns out the fortune wheel is a surprisingly good mechanical analogy
-to how a typical pseudo-random number generator works. The mathematical equivalent
-of the concept of "wrapping around at every turn" is the *modulo* operation in
-ordinary integer arithmetic and it is interesting to note that, as we shall see
-in a moment, the modulo is a fundamental ingredient in all the generators that are
-relevant for everyday use.
+to how a typical pseudo-random (ops: did I just say "pseudo"?) number generator works.
+The mathematical equivalent of the concept of "wrapping around at every turn" is the
+*modulo* operation in ordinary integer arithmetic and it is interesting to note that,
+as we shall see in a moment, the modulo is a fundamental ingredient in all the generators
+that are relevant for everyday use.
 We shall briefly come back to modular arithmetic in section @sec-modular-arithmetic
 but, before we do that, there's a few thing we should sort out.
 
@@ -156,7 +155,7 @@ can hardly be overstated. The former are by definition aperiodic and non determi
 Yet, if you want to run a lottery, you should probably have a look at this article
 about the
 [the Michael Larsen incident](https://web.archive.org/web/20170712041017/http://www.rotten.com/library/conspiracy/press-your-luck/)
-(amusing, I promise) before you consider opting away from a TRNG.
+(amusing reading, I promise) before you consider opting away from a TRNG.
 
 PRNGs, on the other hand, are typically *very* efficient and have the advantage
 that you can regenerate a given sequence as many times as you want. This is
