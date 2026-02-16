@@ -103,7 +103,9 @@ The mathematical equivalent of the concept of "wrapping around at every turn" is
 as we shall see in a moment, the modulo is a fundamental ingredient in all the generators
 that are relevant for everyday use.
 We shall briefly come back to modular arithmetic in section @sec-modular-arithmetic
-but, before we do that, there's a few thing we should sort out.
+but, before we do that, there's a few thing we should sort out. In the meantime,
+@lecuyer17 provides an engaging and accessible account of the fascinating history
+of random number generators.
 
 
 ## Random (and pseudo-random) sequences

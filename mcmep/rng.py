@@ -3,8 +3,14 @@ from abc import ABC, abstractmethod
 
 class Sequence(list):
 
-    def __init__(self):
+    def __init__(self, seed: int):
         super().__init__()
+        self.seed = seed
+        self.end_point = None
+
+    def finalize(self, value):
+        if value == self[-1]:
+            self.end_point = value
 
 
 class AbstractPRNG(ABC):
@@ -17,7 +23,7 @@ class AbstractPRNG(ABC):
         super().__init__()
         self._current = seed
         self._modulus = modulus
-        self._sequence = Sequence()
+        self._sequence = Sequence(seed)
 
     def __iter__(self):
         return self
@@ -25,6 +31,7 @@ class AbstractPRNG(ABC):
     def __next__(self):
         value = self._next()
         if value in self._sequence:
+            self._sequence.finalize(value)
             raise StopIteration
         self._sequence.append(value)
         self._current = value
@@ -46,9 +53,18 @@ class MiddleSquare(AbstractPRNG):
 
 
 if __name__ == "__main__":
+    sequences = []
     for i in range(100):
         prng = MiddleSquare(i, num_digits=2)
         for value in prng:
             pass
         sequence = prng._sequence
-        print(i, len(sequence), sequence, prng._next())
+        sequences.append(sequence)
+    endpoints = set(seq.end_point for seq in sequences)
+    for end in endpoints:
+        seqs = [seq for seq in sequences if seq.end_point == end]
+        seqs.sort(key=lambda s: -len(s))
+        print(f"Endpoint: {end}")
+        for seq in seqs:
+                print(seq.seed, "->", seq, len(seq))
+        print(f"Number of sequences ending in {end}: {len(seqs)}")
