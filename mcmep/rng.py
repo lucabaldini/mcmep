@@ -4,9 +4,12 @@ from abc import ABC, abstractmethod
 class Sequence(list):
 
     def __init__(self, seed: int):
-        super().__init__()
-        self.seed = seed
+        super().__init__([seed])
         self.end_point = None
+
+    @property
+    def seed(self):
+        return self[0]
 
     def finalize(self, value):
         if value == self[-1]:
@@ -53,18 +56,28 @@ class MiddleSquare(AbstractPRNG):
 
 
 if __name__ == "__main__":
-    sequences = []
+    sequence_dict = {}
     for i in range(100):
         prng = MiddleSquare(i, num_digits=2)
         for value in prng:
             pass
         sequence = prng._sequence
-        sequences.append(sequence)
-    endpoints = set(seq.end_point for seq in sequences)
-    for end in endpoints:
-        seqs = [seq for seq in sequences if seq.end_point == end]
-        seqs.sort(key=lambda s: -len(s))
-        print(f"Endpoint: {end}")
-        for seq in seqs:
-                print(seq.seed, "->", seq, len(seq))
-        print(f"Number of sequences ending in {end}: {len(seqs)}")
+        try:
+            sequence_dict[sequence.end_point].append(sequence)
+        except KeyError:
+            sequence_dict[sequence.end_point] = [sequence]
+    for l in sequence_dict.values():
+        l.sort(key=lambda s: -len(s))
+    for key, value in sequence_dict.items():
+        print(f"Sequences ending with {key}")
+        visited = set()
+        for seq in value:
+            if seq.seed in visited:
+                continue
+            split = 0
+            for val in seq:
+                if val in visited:
+                    break
+                split += 1
+            print(seq[:split], "->", seq[split:], f" (len={len(seq)})")
+            visited |= set(seq)
