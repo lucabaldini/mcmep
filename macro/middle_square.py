@@ -165,7 +165,7 @@ xy = _POS_DICT[51]
 put(98, (xy[0] + 0.5 * _HOR_SPACING, xy[1]), seed=True)
 
 # 50 is an isolated point
-put(50, (-10. * _HOR_SPACING, -8. * _VERT_SPACING), fixed=True, seed=True)
+put(50, (-14. * _HOR_SPACING, 3. * _VERT_SPACING), fixed=True, seed=True)
 
 
 plt.axis("off")
