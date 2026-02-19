@@ -238,8 +238,7 @@ X_{n+1} = X_n + 1 \mod m \quad \text{e.g.} \quad 0,~1,~2\ldots m
 $$
 provides the maximum period $m$, but it is obviously not random.
 
-
-Before we move on, you might already be uncomfortable with the fact that we are
+Before we move on, you feel be uncomfortable with the fact that we are
 dealing with integers. Most of our simulations live in the realm of floating-point
 numbers, and when do we get to that? Well, you just do
 $$
@@ -259,10 +258,65 @@ things.
 Devised by John Von Neumann at the turn of the 1940s, the middle-square method
 if often regarded as the oldest practical method to produce pseudo-random sequences,
 as well as an archetypal examples of all the idiosyncrasies that a good generator
-should stay away from.
+should stay away from. This [blog post](http://bit-player.org/2022/the-middle-of-the-square/)
+is a *beautiful* reading on the matter.
 
-Look at this [blog post](http://bit-player.org/2022/the-middle-of-the-square/).
+The underlying algorithm that the name *middle square* is meant to convey is the following:
+given a seed $X_0$ with $n$ digits, take its square $X_0^2$ (this will have at most $2n$
+digits, and you can actually make it a $2n$-digits number by padding with zeros on the
+left side) and select the $n$ digits in the middle of its numeral representation; this is
+the next number in the sequence. That is, assuming that we are working with four decimal
+digits, if we start with 3333, we square it to get 11108889 and the next number in the
+sequence is 1088; then comes 1837. And so on and so forth.
 
+Quick digression. If you paid attention you will notice that what we are doing is mixing
+numbers and numerals: calculating the square has a meaning that is independent from the
+base we are using, but *taking the $n$ mid digits* is something that operates on the
+string  representation of the number, not the number itself. That is, using decimal or
+binary digits are two different things in this context. Going back to our previous example,
+decimal 3333 translates to 0b110100000101 (12 binary digits), 11108889
+to 0b101010011000001000011001 (24 binary digits), and if we get rid of six digits on both
+sides we get 0b011000001000, i.e., decimal 1544. The two things do not roundtrip.
+Not a big deal, but definitely something to be aware of. You will also notice that for the
+very concept of *selecting the $n$ digits in the middle* not to be ill-defined, $n$
+must be even to start with.
+
+Back on track. How do I translate *selecting the $n$ digits in the middle* in a way that
+can be expressed in a programming language? Well, you *could* convert the number into a
+string and operate on that, but at a second glance it is easy to see that you can actually
+do it with a combination of the modulo operator and the integer division. In Python the
+thing might read vaguely like:
+
+```{python}
+
+def next_middle_square(x):
+    """Calculate the next element in a middle square sequence (4 decimal digits).
+    """
+    return (x ** 2 // 100) % 10000
+
+value = 3333
+# The number following 3333 should be 1088.
+value = next_middle_square(value)
+print(value)
+# The number following 1088 should be 1837.
+value = next_middle_square(value)
+print(value)
+```
+
+All right. What can we say on the properties of the sequence? Well, for one thing, it
+fits in our definition given by @eq-rnd_recurrence as we can wite the recurrence
+relation as
+$$
+X_{n + 1} = \left\lfloor \frac{X_n}{b^\frac{e}{2}} \right\rfloor \mod b^e
+$$
+where the brackets indicate the integer division ignoring the reminder, $b$ is the base
+(e.g., 10, or 2) in which we operate, and $e$ is the number of digits we are targeting.
+What can we say about the period we are expecting? Does it depend on the seed? And how
+about the other statistical properties? This is where things get a little bit difficult,
+as this is a hard problem to attack mathematically. (And, admittedly, not a very interesting
+one from any practical standpoint.) But since we have computers, it is very easy to
+attack it with brute force, and @fig-middle_square shows all the possible sequences that
+we might ever get with two decimal digits.
 
 ::: {#fig-middle_square}
 ![](figures/middle_square.png){width=100%}
@@ -270,6 +324,33 @@ Look at this [blog post](http://bit-player.org/2022/the-middle-of-the-square/).
 Full directed graph of all the possible sequence for a 2-decimal digits middle-square
 generator.
 :::
+
+A few directions to read the graph. The numbers surrounded by a circle (e.g., 94) are all
+of those that you only visit if you use them as a seed to start with---they have no other
+input leading into them. There are exactly four numbers (with two decimal digits) that are
+transformed into themselves by the middle-square algorithm, and they are: 0, 10, 50 and 60
+(make sure you can verify that with pencil and paper); for obvious reasons, they are called
+*fixed points*, and they are surrounded with a square in the graph. As soon as one stumbles
+across a fixed point, the sequence is stuck into an infinite cycle of length one. Not good.
+50 is doubly peculiar, in that is both a fixed point, and one that has no input. You only
+visit it if you use it as a seed, and if you do that you never see anything different; a
+nice example of a cute little sequence of length 1.
+57 and 24 are also peculiar in that they are transformed into each other, and make it
+for the only non-trivial cycle (of length 2, in this case) that one encounters with two
+decimal digits. Although the theoretical maximum period in this case is 100, the two longest
+sequences across all possible seeds are the ones going from either 42 or 69 to 0, and they
+both have exactly 15 elements. All other sequences are shorter than that, and most of them
+*much* shorter. Disappointing.
+
+Does this mean that all is lost, or is it rather than two digits are too few, and the
+thing is well behaved with longer number? How about middle-square sequences with 12
+decimal digits? Are those any good? I am afraid the answer is no, unfortunately.
+No matter how many digits you use, the middle square method tends to be trapped
+in fixed points or relatively short cycles. The median sequence length scales as the
+square root of the modulo. With 12 digits you have a theoretical maximum period of
+$10^{12}$ and yet the typical sequence has a period that is a million times shorter.
+Not exactly an example of efficiency.
+
 
 ## Linear congruential generators
 
