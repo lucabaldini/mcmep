@@ -165,13 +165,28 @@ xy = _POS_DICT[51]
 put(98, (xy[0] + 0.5 * _HOR_SPACING, xy[1]), seed=True)
 
 # 50 is an isolated point
-put(50, (-10. * _HOR_SPACING, -8. * _VERT_SPACING), fixed=True, seed=True)
+put(50, (-12. * _HOR_SPACING, 3. * _VERT_SPACING), fixed=True, seed=True)
+
+# The only loop.
+# 57 -> 24 (79)
+put(57, (-1. * _HOR_SPACING, 6. * _VERT_SPACING), seed=True)
+put_right(24, 57, connect=False)
+x1, y1 = _POS_DICT[57]
+x2, y2 = _POS_DICT[24]
+delta = 0.25 * _VERT_SPACING
+kwargs = dict(arrowstyle="->", connectionstyle="angle,angleA=30,angleB=-30,rad=20")
+plt.gca().annotate("", xy=(x1, y1 - delta), xytext=(x2, y2 - delta), arrowprops=kwargs)
+plt.gca().annotate("", xy=(x2, y2 + delta), xytext=(x1, y1 + delta), arrowprops=kwargs)
+put_below(79, 24)
 
 
 plt.axis("off")
 plt.subplots_adjust(left=0., right=1., top=1., bottom=0.)
 plt.gca().set_aspect("equal")
-setup_gca(xmin=-15. * _HOR_SPACING, xmax=3. * _HOR_SPACING,
-          ymin=-9 * _VERT_SPACING, ymax=7 * _VERT_SPACING)
+setup_gca(xmin=-14.5 * _HOR_SPACING, xmax=2.5 * _HOR_SPACING,
+          ymin=-8.5 * _VERT_SPACING, ymax=6.5 * _VERT_SPACING)
+
+plt.savefig("./figures/middle_square.png")
+plt.savefig("./figures/middle_square.pdf")
 
 plt.show()

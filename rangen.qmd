@@ -164,6 +164,19 @@ that you can regenerate a given sequence as many times as you want. This is
 definitely your first choice for a Physics simulation---really, it is a no-brainer.
 
 
+## Tables
+
+There has been a time when tables (and even huge ones) of (true) random digits were
+actually a thing. The most famous instance of such endeavors is probably the book
+[A Million Random Digits with 100,000 Normal Deviates](https://www.rand.org/pubs/monograph_reports/MR1418.html#top)
+published in 1955 (and re-issued in 2001) by the RAND corporation.
+If you have 70 euros to spare you can buy one of the last paper copies available online.
+(The reviews of the book are quite funny, too.)
+
+Nuisance to use. Memory was precious in the old days. Both motivated the development of
+alternative means for producing random numbers.
+
+
 ## Pseudo-random sequences via recurrence
 
 $$
@@ -177,6 +190,13 @@ $$
 
 Look at this [blog post](http://bit-player.org/2022/the-middle-of-the-square/).
 
+
+::: {#fig-middle_square}
+![](figures/middle_square.png){width=100%}
+
+Full directed graph of all the possible sequence for a 2-decimal digits middle-square
+generator.
+:::
 
 ## Linear congruential methods
 
