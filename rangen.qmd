@@ -179,6 +179,24 @@ alternative means for producing random numbers.
 
 ## Pseudo-random sequences via recurrence
 
+If you happen to be under impression that pseudo-random number generation is a
+solved problem, you couldn't be more wrong. For many years linear congruential
+generators (LCG) have been the de-facto standard. In 1997 @matsumoto98 caught the
+entire World by surprise when they published the Mersenne Twister (MT) algorithm:
+with a stunning period of $2^{19937} −1$ and many other desirable properties it
+immediately underwent widespread adoption, and still is the default engine in
+many programming languages (including Python) and statistical packages. It took
+several years for some definite shortcomings and limitations to emerge.
+In 2014 @oneill2014 published the idea of a family of permuted congruential
+generators (PCG), and this is a notable case of an idea that has never been published
+in a formal scientific paper, has been harshly criticized in a number of blogs
+and other informal forums on the web (see, e.g. [here](https://pcg.di.unimi.it/pcg.php)),
+and yet had real-world impact (PCG is the default random generator in numpy).
+In the meantime people has devised all sorts of clever techniques to generate
+random digits with focus on speed, memory efficiency, and statistical quality
+([this](https://prng.di.unimi.it/), e.g., is a good resource).
+
+
 $$
 X_{n+1} = f(X_n)
 $$
@@ -198,9 +216,21 @@ Full directed graph of all the possible sequence for a 2-decimal digits middle-s
 generator.
 :::
 
-## Linear congruential methods
+## Linear congruential generators
 
 
 [paper](https://archive.org/details/proceedings_of_a_second_symposium_on_large-scale_/page/140/mode/2up)
 
+
+## Other generators
+
+Include a few words about crypto generators, and mention the relevant Python
+module.
+
+
 ## Tests for randomness {#sec-randomness-tests}
+
+
+## Survey of the current status
+
+Table of what is used in several
