@@ -177,6 +177,10 @@ Nuisance to use. Memory was precious in the old days. Both motivated the develop
 alternative means for producing random numbers.
 
 
+## Digression: modular arithmetic {#sec-modular-arithmetic}
+
+
+
 ## Pseudo-random sequences via recurrence
 
 If you happen to be under impression that pseudo-random number generation is a
@@ -186,25 +190,76 @@ entire World by surprise when they published the Mersenne Twister (MT) algorithm
 with a stunning period of $2^{19937} −1$ and many other desirable properties it
 immediately underwent widespread adoption, and still is the default engine in
 many programming languages (including Python) and statistical packages. It took
-several years for some definite shortcomings and limitations to emerge.
+several years for some definite shortcomings and limitations now widely
+recognized to emerge.
 In 2014 @oneill2014 published the idea of a family of permuted congruential
 generators (PCG), and this is a notable case of an idea that has never been published
 in a formal scientific paper, has been harshly criticized in a number of blogs
 and other informal forums on the web (see, e.g. [here](https://pcg.di.unimi.it/pcg.php)),
-and yet had real-world impact (PCG is the default random generator in numpy).
-In the meantime people has devised all sorts of clever techniques to generate
-random digits with focus on speed, memory efficiency, and statistical quality
-([this](https://prng.di.unimi.it/), e.g., is a good resource).
+and yet had real-world impact, as PCG is the default random generator in numpy
+(and the [related discussion](https://github.com/numpy/numpy/issues/13635) is a
+good testament as to how difficult is agreeing on what *the* best PRNG is).
 
-
+The simplest way to generate a pseudo-random sequence is a by a recurrence
+relation of the type
 $$
-X_{n+1} = f(X_n)
-$$
+X_{n+1} = f(X_n) \mod m
+$${#eq-rnd_recurrence}
+where $X_{n+1}$ and $X_n$ are non-negative integers, $m$ is called *modulo*, and
+$f(x):~\mathbb{N} \rightarrow \mathbb{N}$ is a suitable function. (More on this
+later.) The idea is that you start from a *seed* $0 \leq X_0 < m$ and let all the
+other numbers flow from @eq-rnd_recurrence.
 
-## Modular arithmetic {#sec-modular-arithmetic}
+Although more complex schemes can (and have been) devised, this very basic
+setting is a good one to discuss some of the general properties that are common
+to all pseudo-random sequences. The most obvious one is perhaps the fact that
+all the numbers in the sequence satisfy $0 \leq X_n < m$, which is to say that
+at most $m$ distinct values can be produced. It follows that, sooner or later,
+we are bound to stumble across a number that we have already visited, and from
+that point on we just go on in circle. We can phrase this very thing in a slightly
+different way by saying that, ultimately, *any pseudo-random sequence is periodic*.
+In our particular case the period $p$ satisfies $p \leq m$. This is not necessarily
+an issue if $p$ is large enough, but definitely important to keep in mind.
+
+At the very basic level, some of the good properties that a PRNG should have
+include
+
+* a long period;
+* high speed (i.e., $f(x)$ should be easy to calculate on a computer);
+* a small memory footprint;
+* good statistical properties (for one thing we will want that any reasonably
+  long subsequence is equi-distributed in the $[0,~m]$ interval, but as we shall
+  see in a moment there are many other desirable properties).
+
+We emphasize that, while having a long period is important, it is not by any means
+the *only* important thing. The sequence
+$$
+X_{n+1} = X_n + 1 \mod m \quad \text{e.g.} \quad 0,~1,~2\ldots m
+$$
+provides the maximum period $m$, but it is obviously not random.
+
+
+Before we move on, you might already be uncomfortable with the fact that we are
+dealing with integers. Most of our simulations live in the realm of floating-point
+numbers, and when do we get to that? Well, you just do
+$$
+u_n = X_n / m
+$$
+and here is you sequence of integers turned into a sequence of floating-point
+numbers between $0$ and $1$. (It goes without saying, these are by all means
+plain, rational numbers, but this is as far as floating-point arithmetics goes
+on a digital computer, and we already knew that.) Appendix ??? provides a cursory
+summary of floating point arithmetics; in the next chapter we shall discuss how
+we turn an equi-distributed sequence in the $[0,~1]$ interval into more interesting
+things.
 
 
 ## Middle square
+
+Devised by John Von Neumann at the turn of the 1940s, the middle-square method
+if often regarded as the oldest practical method to produce pseudo-random sequences,
+as well as an archetypal examples of all the idiosyncrasies that a good generator
+should stay away from.
 
 Look at this [blog post](http://bit-player.org/2022/the-middle-of-the-square/).
 
