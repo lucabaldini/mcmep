@@ -1,7 +1,3 @@
-
-
-
-
 from matplotlib.patches import Circle, Rectangle
 
 from aptapy.plotting import plt, apply_stylesheet, setup_gca

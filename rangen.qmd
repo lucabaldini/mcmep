@@ -255,7 +255,7 @@ things.
 
 ## Middle square
 
-Devised by John Von Neumann at the turn of the 1940s, the middle-square method
+Devised by John Von Neumann at the turn of the 1940s, the middle-square (MS) method
 if often regarded as the oldest practical method to produce pseudo-random sequences,
 as well as an archetypal examples of all the idiosyncrasies that a good generator
 should stay away from. This [blog post](http://bit-player.org/2022/the-middle-of-the-square/)
@@ -354,8 +354,14 @@ Not exactly an example of efficiency.
 
 ## Linear congruential generators
 
-
+Linear congruential generators (LCG) are among the most studied and well understood
+PRNG available, and have been widely used since the early 1950s. First discussed in a
 [paper](https://archive.org/details/proceedings_of_a_second_symposium_on_large-scale_/page/140/mode/2up)
+by D. H. Lehmer, they take the general form
+$$
+X_{n+1} = (a X_n + c) \mod m
+$${#eq-rnd_lcg}
+where $a$ is called the *multiplier*, and $c$ the increment.
 
 
 ## Other generators
