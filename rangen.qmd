@@ -396,11 +396,11 @@ that all we have to require to guaranteed the maximum period $m$ is that
 
 Full disclaimer: you will not be qualified to design new PRNGs after just reading
 this document anyway, and it is perfectly ok if you have no idea of how you would
-go about that. It is even ok if you do not commit to permanent memory the precise
-conditions of this theorem. But let's take a closer look at what they imply in
-this particular case. The prime factors of $m$ are 2 and 5, so we want $a - 1$
-to be divisible by both. Actually, since $m$ is divisible by 4, we want $a -1$
-to be divisible by both 4 and 5, which is to say
+go about demonsrtating this. It is even ok if you do not commit to permanent memory
+the precise conditions of this theorem. But let's take a closer look at what they
+imply in this particular case. The prime factors of $m$ are 2 and 5, so we want
+$a - 1$ to be divisible by both. Actually, since $m$ is divisible by 4, we want
+$a -1$ to be divisible by both 4 and 5, which is to say
 $$
 a \mod 20 = 1
 $$
@@ -431,7 +431,10 @@ it goes back to where we started. Note that the fact that the trick works with
 33 as a seed implies that it also works with any other seed. And we can now do
 the same wit, say, 12 decimal digits and get actual random numbers.
 
-On a second thought: are we *really* happy with this?
+On a second thought: are we *really* happy with this? Look at the least significant
+digit of the elements in the sequence: 3, 4, 5, 6, 7... It doesn't look random,
+does it? As it turns out, this is a well understood fact too, and it depends on
+the fact that the modulo we have chosen is a power of the base we are using.
 
 
 ## Other generators
