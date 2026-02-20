@@ -363,6 +363,76 @@ X_{n+1} = (a X_n + c) \mod m
 $${#eq-rnd_lcg}
 where $a$ is called the *multiplier*, and $c$ the increment.
 
+A cursory look at the following LCG for two decimal digits clearly show that,
+unless we devise a good strategy for choosing the underlying constants, a linear
+congruental generator is not necessarily better than the middle-square---which
+we said it was terrible.
+
+```{python}
+m = 100
+a = 40
+c = 8
+seed = 33
+sequence = []
+
+value = seed
+while value not in sequence:
+    sequence.append(value)
+    value = (a * value + c) % m
+
+print(f"Sequence length: {len(sequence)} {sequence}")
+```
+
+(What is happening, here, is that the second value, 28, is transformed into itself,
+and we are stuck with a sequence of length 2. Disappointing.)
+
+The good news is that we have a good amount of well understood theory that goes
+with this class of generators. More specifically, the Hull–Dobell theorem states
+that all we have to require to guaranteed the maximum period $m$ is that
+
+* $m$ and $c$ are coprime (i.e., their greatest common divisor is 1);
+* $a - 1$ is divisible by all prime factors of $m$;
+* $a - 1$ is divisible by 4 if $m$ is divisible by 4.
+
+Full disclaimer: you will not be qualified to design new PRNGs after just reading
+this document anyway, and it is perfectly ok if you have no idea of how you would
+go about that. It is even ok if you do not commit to permanent memory the precise
+conditions of this theorem. But let's take a closer look at what they imply in
+this particular case. The prime factors of $m$ are 2 and 5, so we want $a - 1$
+to be divisible by both. Actually, since $m$ is divisible by 4, we want $a -1$
+to be divisible by both 4 and 5, which is to say
+$$
+a \mod 20 = 1
+$$
+This leaves us with the relatively small set $a \in \left\{ 1, 21, 41, 61, 81\right\}$.
+And it should not be difficult to convince yourself that 1 would be a terrible
+choice. (Try it out if you are not convinced.) The other thing is that we want
+$c$ coprime with 100, which means that it should be odd and not a multiple of 5.
+All right, we might have a winner!
+
+```{python}
+m = 100
+a = 21
+c = 11
+seed = 33
+sequence = []
+
+value = seed
+while value not in sequence:
+    sequence.append(value)
+    value = (a * value + c) % m
+
+print(f"Sequence length: {len(sequence)} {sequence}")
+```
+
+Whoho! This sequence is indeed starting from 33 and is happily cycling through all
+the possible numbers between 0 and 99 included, with no obvious patterns, before
+it goes back to where we started. Note that the fact that the trick works with
+33 as a seed implies that it also works with any other seed. And we can now do
+the same wit, say, 12 decimal digits and get actual random numbers.
+
+On a second thought: are we *really* happy with this?
+
 
 ## Other generators
 
