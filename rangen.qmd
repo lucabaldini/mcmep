@@ -406,8 +406,10 @@ a \mod 20 = 1
 $$
 This leaves us with the relatively small set $a \in \left\{ 1, 21, 41, 61, 81\right\}$.
 And it should not be difficult to convince yourself that 1 would be a terrible
-choice. (Try it out if you are not convinced.) The other thing is that we want
-$c$ coprime with 100, which means that it should be odd and not a multiple of 5.
+choice. (Not convinced? Pick $a = 1$ and $c = 1$, and you have created a beautiful
+counter---sure enough it reaches the longest possible period $m$, but it does not
+look very random, does it?) The other thing is that we want $c$ coprime with 100, which
+means that it should be odd and not a multiple of 5---how about 11?
 All right, we might have a winner!
 
 ```{python}
@@ -433,19 +435,71 @@ the same wit, say, 12 decimal digits and get actual random numbers.
 
 On a second thought: are we *really* happy with this? Look at the least significant
 digit of the elements in the sequence: 3, 4, 5, 6, 7... It doesn't look random,
-does it? As it turns out, this is a well understood fact too, and it depends on
-the fact that the modulo we have chosen is a power of the base we are using.
-
-
-## Other generators
-
-Include a few words about crypto generators, and mention the relevant Python
-module.
+does it? As it turns out, this is a well understood fact too: with such a small
+number of digits, there is essentially no way for the output not to show patterns.
+(There is also a more subtle reason, that is, we have chosen the multiplier to be
+a power of the base we are working with, but this is becoming too technical.)
+The point is: if you are careful, things do get better with larger number, but
+by all means *having a long period* is not the end of the story. Which brings us to the
+next question: now that we start dealing with candidate sequences that are not obviously
+flawed by just looking at them with the naked, eye, how do we tell if any particular
+one is really good?
 
 
 ## Tests for randomness {#sec-randomness-tests}
 
 
-## Survey of the current status
 
-Table of what is used in several
+## Modern generators
+
+Cover very quickly F2-linear pseudorandom number generators, and particularly MT and
+Xoshiro. Also PCG makes it for an interesting story.
+
+Include a few words about crypto generators, and mention the relevant Python
+module.
+
+### Period: is that really important?
+
+While quoting wall-clock time when discussing computer operations is always a little
+bit silly, nowadays most modern generators run at a speed of a few ns per call on a
+typical laptop. It would take a time equal to the current age of the universe to generate
+$10^{27}$ random numbers, if that was the only thing that we were doing. I'll give you
+1000 parallel streams and make that $10^{30}$.
+For comparison, $2^{128} \approx 3.4 \times 10^{38}$ (that is, almost a billion larger),
+$2^{256} \approx 1.2 \times 10^{77}$ (which is only three orders of magnitude short
+of the number of protons in the universe), and $2^{19937} \approx 10^{6000}$.
+(You will have to resort to your high-school knowledge of the logarithms to calculate it,
+because if you try in a Python prompt you will get an overflow error.)
+
+Now, an obvious question arise: do we *really* need such a ridiculous period from a PRNG?
+
+On the flip side of the story, $35! \approx 10^{40}$, so be aware that, if you are into
+combinatorial problems, with a period as short as $2^{128}$ you will not be able to
+generate all the possible random permutations of a set of 35 elements. Somebody
+(see, e.g., [this paper]) think that is actually a big deal.
+
+
+## What am I using under the hood?
+
+It is fair to say that LCG are pretty much dead, nowadays. Many popular programming
+languages and data-analysis program, while offering many options, default to
+the MT19937 version of the Mersenne Twister algorithm, although its limitations
+are widely recognized. The ROOT documentation for the
+[TRandom](https://root.cern.ch/doc/master/classTRandom.html) class reads verbatim
+*"this is a very BAD Generator, not to be used"* referring to MT19937, and yet that
+is used to instantiate the global pointer to the ROOT generator. So goes life.
+Meanwhile the PCG and Xoshiro families of PRNG are gaining traction. Here is a
+largely incomplete survey of the situation as of 2026.
+
+
+| Language/framework | Default generator | Period |
+|--------------------|-------------------|--------|
+| [Python](https://docs.python.org/3/library/random.html) | MT19937, @matsumoto98 | $2^{19937} - 1$ |
+| [NumPy](https://numpy.org/doc/stable/reference/random/bit_generators/pcg64.html#numpy.random.PCG64) | PCG XSL RR 128/64, @oneill2014 | $2^{128}$ |
+| [ROOT](https://root.cern.ch/doc/master/classTRandom.html) | MT19937, @matsumoto98 | $2^{19937} - 1$ |
+| [Julia](https://docs.julialang.org/en/v1/stdlib/Random/) | Xoshiro256++, @blackman21 | $2^{256} - 1$ |
+| [R](https://rdrr.io/r/base/Random.html) | MT19937, @matsumoto98 | $2^{19937 - 1}$ |
+| [MATLAB](https://www.mathworks.com/help/matlab/ref/rng.html) | MT19937, @matsumoto98 | $2^{199371} - 1$ |
+
+: Table of the default random generators in some widely used programming
+  languages and statistical frameworks.

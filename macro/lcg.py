@@ -20,8 +20,8 @@ seed = 33
 # i.e., c odd and not a multiple of 5.
 # m = 21, c = 11 -> the second digit increases by one at each step.
 # This is a consequence of the fact that the modulus is equal to the word size.
-lcg = LinearCongruentialGenerator(seed, modulus=100, multiplier=21, increment=11)
-seq = np.array(list(value for value in lcg))
+lcg = LinearCongruentialGenerator(seed, modulus=99, multiplier=67, increment=79)
+seq = np.array([seed] + list(value for value in lcg))
 print(seq, len(seq))
 #for val in seq:
 #    print(val % 10)
