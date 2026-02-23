@@ -203,7 +203,7 @@ good testament as to how difficult is agreeing on what *the* best PRNG is).
 The simplest way to generate a pseudo-random sequence is a by a recurrence
 relation of the type
 $$
-X_{n+1} = f(X_n) \mod m
+X_{n+1} = f(X_n) \bmod m
 $${#eq-rnd_recurrence}
 where $X_{n+1}$ and $X_n$ are non-negative integers, $m$ is called *modulo*, and
 $f(x):~\mathbb{N} \rightarrow \mathbb{N}$ is a suitable function. (More on this
@@ -234,7 +234,7 @@ include
 We emphasize that, while having a long period is important, it is not by any means
 the *only* important thing. The sequence
 $$
-X_{n+1} = X_n + 1 \mod m \quad \text{e.g.} \quad 0,~1,~2\ldots m
+X_{n+1} = X_n + 1 \bmod m \quad \text{e.g.} \quad 0,~1,~2\ldots m
 $$
 provides the maximum period $m$, but it is obviously not random.
 
@@ -307,7 +307,7 @@ All right. What can we say on the properties of the sequence? Well, for one thin
 fits in our definition given by @eq-rnd_recurrence as we can wite the recurrence
 relation as
 $$
-X_{n + 1} = \left\lfloor \frac{X_n}{b^\frac{e}{2}} \right\rfloor \mod b^e
+X_{n + 1} = \left\lfloor \frac{X_n}{b^\frac{e}{2}} \right\rfloor \bmod b^e
 $$
 where the brackets indicate the integer division ignoring the reminder, $b$ is the base
 (e.g., 10, or 2) in which we operate, and $e$ is the number of digits we are targeting.
@@ -359,7 +359,7 @@ PRNG available, and have been widely used since the early 1950s. First discussed
 [paper](https://archive.org/details/proceedings_of_a_second_symposium_on_large-scale_/page/140/mode/2up)
 by D. H. Lehmer, they take the general form
 $$
-X_{n+1} = (a X_n + c) \mod m
+X_{n+1} = (a X_n + c) \bmod m
 $${#eq-rnd_lcg}
 where $a$ is called the *multiplier*, and $c$ the increment.
 
@@ -402,7 +402,7 @@ imply in this particular case. The prime factors of $m$ are 2 and 5, so we want
 $a - 1$ to be divisible by both. Actually, since $m$ is divisible by 4, we want
 $a -1$ to be divisible by both 4 and 5, which is to say
 $$
-a \mod 20 = 1
+a \bmod 20 = 1
 $$
 This leaves us with the relatively small set $a \in \left\{ 1, 21, 41, 61, 81\right\}$.
 And it should not be difficult to convince yourself that 1 would be a terrible
