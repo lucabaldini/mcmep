@@ -448,6 +448,96 @@ one is really good?
 
 ## Tests for randomness {#sec-randomness-tests}
 
+When discussing the tests for randomness, the specifics depend on what we
+are testing, exactly, e.g., $X_n$ as integers vs. $u_n$ as floating-point numbers
+in the $[0,~1]$ interval.
+
+If we concatenate all the subsequent $X_n$ and treat our sequence as an un-interrupted
+stream of decimal digits, a few obvious desirable things immediately come to mind.
+For one thing we would like each digit to appear with the same probability
+$1/10$ in the sequence. (We note that this is hardly enough for the thing to
+appear as random, as a simple counter $X_n = 0,~1,~2,~3\ldots$ trivially satisfy
+this.) We may ask that *pairs* of subsequent identical digits, e.g. $2,~2$, or
+$7,~7$, appear with the expected probability $1/100$, and this can be easily
+generalized to triplets, quadruplets or, really, arbitrary high multiplicity.
+
+In reality, there is a nearly unlimited number of properties that one can list and,
+in absence of a single test that can qualify a given sequence as good enough in
+terms of randomness, the best that one can do is feed their generator to a full
+battery of tests, and hope that it passes them all.
+
+There in one, special test, though, that is worth at least a cursory discussion
+as it offers interesting insight into the very basic process of generating random
+numbers by arithmetical means. It is called the *spectral test*, and is based on
+a nice little paper by @marsaglia68 titled *Random numbers fall mainly in the planes*.
+Let's go back for a second to the simple LCG we have discussed in the previous
+section---more specifically to the maximum-period sequence we have obtained in the
+last snippet by carefully choosing the multiplier and the increment.
+@fig-lcg_spectral shows how pairs of successive point $u_n~,u_{n+1}$ are distributed
+in the cartesian plane. (Make sure you grasp the meaning of the plot. This is
+in $u_n$ space, i.e., we divided the $X_n$ by the modulus, and the small text label
+indicate the index in the sequence at which each number occurs: the first point
+is $0.33,~0.04$, after which we jump to the upper-left corner $0.04,~0.95$, then
+to the opposite corner $0.95,~0.06$ and so on and so forth.)
+
+::: {#fig-lcg_spectral}
+![](figures/lcg_spectral.png){width=100%}
+
+Representation of the $u_n,~u_{n+1}$ ordered pairs for the simple linear congruential
+generator with maximum period discussed in the previous section. The decimal
+integers have been converted into floating-point numbers in the $[0,~1]$ interval
+dividing by the modulus. The small numbers indicate the order of appearance in the
+sequence.
+:::
+
+Well, it is fair to say that this is looking anything but random. At a second though,
+maybe this is not really unexpected. We are pretending to generate random real numbers,
+but under the hood all we are doing is truncating stuff in the $[0~,1]$ interval
+to and accuracy of $1/m$ and therefore we are bound to be unable to properly fill
+the plane in this representation. With a ridiculously small modulo such as 100
+things look understandingly horrible, and one has hope that with a much larger $m$
+things are better---and indeed they are---but nonetheless this is a feature that
+cannot be overcome and we need to keep it in mind.
+@marsaglia68 makes this all quantitative for LCG, showing that the output of a
+LCG with modulo $m$ lie on at most 14 straight lines. In @fig-lcg_spectral we do
+see 10 lines oriented at $45^\circ$, so our generator is pretty much as good as
+it gets with two decimal digits.
+
+The thing can in fact be generalized from 2 to $n$ dimensions (e.g., for $n=3$
+we are dealing with triplets $u_n,~u_{n+1},~u_{n+2}$ in the volume, for $n=4$ with
+quadruplets, and so on and so forth), and the basic content of Marsaglia's
+theorem is that the output n-tuples from a LCG will lie on at most
+$$
+(n! m)^{\frac{1}{n}}
+$$
+hyperplanes. For $n=2$ and $m=2^{128}$, for instance, this gives about
+$2 \times 10^{19}$ lines---something we hardly have to worry about. (And yet, if
+we are looking at $n=10$ we are talking about *only* 32296 hyperplanes.)
+
+
+### The worst LCG ever
+
+The spectral test brings us to another piece of random number folklore: RANDU,
+now universally dubbed as one of the most ill-conceived PRNGs to have ever seen
+widespread use. Originally introduced by IBM at the end of the 1950s, RANDU is
+defined as a (purely) linear congruental generator with modulo $m = 2^{31}$,
+multiplier $a = 65539$ and increment $c = 0$
+$$
+X_{n + 1} = 65539 \; X_n \bmod 2^{31}
+$$
+This was done purely on efficiency consideration, with no regard to the statistical
+quality of the output: since $65539 = 2^{16} + 3$, the recurrence relation can
+be rewritten as
+$$
+X_{n + 1} = ((X \ll 16) + X + (X \ll 1)) \bmod 2^{31}
+$$
+which on a 32-bit binary computer only involves bit shifts, additions and a
+truncation (the final modulo), all of which could be done very efficiently in hardware.
+
+\Phrased in a slightly different way, RANDU was blazingly fast on a typical computer
+of the time. And yet it can be shown that it fails *spectacularly* the spectral
+test with $n \ge 3$, as the output triplets only sample 15 planes in the unit cube
+against a theoretical maximum of 2344.
 
 
 ## Modern generators

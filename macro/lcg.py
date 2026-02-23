@@ -14,23 +14,29 @@ apply_stylesheet("aptapy-xkcd")
 
 from mcmep.rng import LinearCongruentialGenerator
 
-
 seed = 33
-# With m = 100, we need a = 1 mod 20 (a in {21, 41, 61, 81}) and c coprime with 100
-# i.e., c odd and not a multiple of 5.
-# m = 21, c = 11 -> the second digit increases by one at each step.
-# This is a consequence of the fact that the modulus is equal to the word size.
-lcg = LinearCongruentialGenerator(seed, modulus=99, multiplier=67, increment=79)
-seq = np.array([seed] + list(value for value in lcg))
+lcg = LinearCongruentialGenerator(seed, modulus=100, multiplier=21, increment=11)
+seq = np.array([seed] + list(value for value in lcg) + [seed])
 print(seq, len(seq))
-#for val in seq:
-#    print(val % 10)
+
+# Convert X_n to u_n
+seq = np.asarray(seq, dtype=float) / lcg._modulus
+# Take pairs (u_n, u_{n+1})
 x = seq[:-1]
 y = seq[1:]
+# Scatter plot
 plt.scatter(x, y)
-plt.scatter([seed, seq[-1]], [seq[0], seed])
-plt.text(seed, seq[0] + 3, "start", ha='center', va='center', fontsize="small")
-plt.text(seq[-1], seed + 3, "stop", ha='center', va='center', fontsize="small")
+# Annotate points with their indices
+for i, (_x, _y) in enumerate(zip(x, y)):
+    plt.text(_x, _y + 0.03, str(i), ha='center', va='center', fontsize="x-small")
+
+
+plt.text(x[0] + 0.02, y[0], "start", ha='left', va='center', fontsize="small")
+plt.text(x[-1] + 0.02, y[-1], "stop", ha='left', va='center', fontsize="small")
 plt.gca().set_aspect("equal")
-setup_gca(xlabel="$X_n$", ylabel="$X_{n+1}$")
+setup_gca(xlabel="$u_n$", ylabel="$u_{n+1}$")
+
+plt.savefig("./figures/lcg_spectral.png")
+plt.savefig("./figures/lcg_spectral.pdf")
+
 plt.show()
