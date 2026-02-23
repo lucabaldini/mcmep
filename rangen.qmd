@@ -593,3 +593,21 @@ largely incomplete survey of the situation as of 2026.
 
 : Table of the default random generators in some widely used programming
   languages and statistical frameworks.
+
+
+## Exercises
+
+::: {#exr-middle_square name="Middle square"}
+Characterize the middle-square method for producing random numbers with $n$ decimal
+and/or binary digits at least up to $n = 8$, and possibly more.  In each case
+identify all the fixed points and possible loops, and calculate the median period
+across all possible seeds. Verify that the latter scales as $\sqrt{n}$.
+:::
+
+
+::: {#exr-randu name="RANDU"}
+Devise a simple toy problem where the RANDU PRNG clearly fails beyond the expected
+numerical precision, and verify that a modern generator (e.g., MT or PCG) fixes
+the problem.
+:::
+
