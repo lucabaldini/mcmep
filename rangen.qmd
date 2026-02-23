@@ -396,7 +396,7 @@ that all we have to require to guaranteed the maximum period $m$ is that
 
 Full disclaimer: you will not be qualified to design new PRNGs after just reading
 this document anyway, and it is perfectly ok if you have no idea of how you would
-go about demonsrtating this. It is even ok if you do not commit to permanent memory
+go about demonstrating this. It is even ok if you do not commit to permanent memory
 the precise conditions of this theorem. But let's take a closer look at what they
 imply in this particular case. The prime factors of $m$ are 2 and 5, so we want
 $a - 1$ to be divisible by both. Actually, since $m$ is divisible by 4, we want
