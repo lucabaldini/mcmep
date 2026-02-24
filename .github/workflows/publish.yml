@@ -23,9 +23,9 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-        with:
+        #with:
           # pin a version if you want reproducibility, e.g. "1.5.57"
-          version: "latest"
+        #  version: "latest"
 
       # If your book uses Python execution (jupyter), uncomment:
       # - name: Set up Python
