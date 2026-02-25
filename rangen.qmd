@@ -534,7 +534,7 @@ $$
 which on a 32-bit binary computer only involves bit shifts, additions and a
 truncation (the final modulo), all of which could be done very efficiently in hardware.
 
-\Phrased in a slightly different way, RANDU was blazingly fast on a typical computer
+Phrased in a slightly different way, RANDU was blazingly fast on a typical computer
 of the time. And yet it can be shown that it fails *spectacularly* the spectral
 test with $n \ge 3$, as the output triplets only sample 15 planes in the unit cube
 against a theoretical maximum of 2344.
